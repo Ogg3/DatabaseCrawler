@@ -5,19 +5,12 @@ import argparse
 import traceback
 import re
 
-parser = argparse.ArgumentParser(description='CheckArroyo: Snapchat chat parser.')
+parser = argparse.ArgumentParser(description='DatabaseCrawler.')
 
-# Point to where snapchat dmp is
 parser.add_argument('-i', '--input_path', required=True, action="store", help='Path to folder with files.')
-
-# Point to where snapchat dmp is
 parser.add_argument('-s', '--search_for_data', required=True, action="store", help='A string or regex to search for.')
-
-# Point to where snapchat dmp is
 parser.add_argument('-m', '--search_for_data_mode', required=True, action="store",
                     help='Search mode, T(able) R(ow) D(ata).')
-
-# test
 parser.add_argument('-c', '--contains', required=False, action="store_true",
                     help='Wildcard search if flag is set (Sets the query to %string%).')
 
