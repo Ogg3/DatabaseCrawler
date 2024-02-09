@@ -1,0 +1,43 @@
+import sqlite3
+import threading
+
+# Skapa en SQLite-databas i minnet (kan vara en filbaserad databas också)
+db_uri = "file:TESTING_MEMORY_DB?mode=memory&cache=shared"
+connection = sqlite3.connect(db_uri, uri=True, check_same_thread=False)
+
+# Skapa en tabell med några exempeldata
+with connection:
+    cursor = connection.cursor()
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS tasks (
+            id INTEGER PRIMARY KEY,
+            task_name TEXT
+        )
+    """)
+    cursor.executemany("INSERT INTO tasks (task_name) VALUES (?)", [("Task 1",), ("Task 2",), ("Task 3",)])
+
+# Funktion för att söka efter en uppgift
+def search_task(task_name):
+    with connection:
+        cursor = connection.cursor()
+        cursor.execute("SELECT * FROM tasks WHERE task_name = ?", (task_name,))
+        result = cursor.fetchone()
+        if result:
+            print(f"Uppgift hittad: {result}")
+        else:
+            print(f"Uppgift ej hittad: {task_name}")
+
+# Skapa två trådar som söker efter uppgifter
+thread1 = threading.Thread(target=search_task, args=("Task 1",))
+thread2 = threading.Thread(target=search_task, args=("Task 3",))
+
+# Starta trådarna
+thread1.start()
+thread2.start()
+
+# Vänta på att trådarna ska avslutas
+thread1.join()
+thread2.join()
+
+# Stäng anslutningen till databasen
+connection.close()
